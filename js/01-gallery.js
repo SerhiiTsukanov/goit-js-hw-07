@@ -4,6 +4,7 @@ import { galleryItems } from './gallery-items.js';
 
 const gallery = document.querySelector(".gallery")
 const galleryIm = galleryMarkup(galleryItems);
+
 function galleryMarkup(galleryItems) {
     return galleryItems.map(({ preview, original, description }) => {
         return `
@@ -27,37 +28,24 @@ gallery.addEventListener('click', onGalleryClick);
 
 function onGalleryClick(evt) {
   evt.preventDefuolt();
-  if (evt.classList.contains('.gallery__image')) {
-    const instance = basicLightbox.create(`
-    <img src="${evt.target.dataser.sourse}" width="800" height="600">
-`)
+  if (evt.target.classList.contains('.gallery__image')) {
+    let instanse = basicLightbox.create(`
+    <img src="${evt.target.dataser.sourse}" width="800" height="600">`,
+      {
+        onClose: (instanse) => {
+          window.removeEventListener("keydown", onPressKeyESC);
+        },
+      }
+    );
 
-instance.show()
+instanse.src = evt.target.dataset.source;
+    instanse.show();
+    window.addEventListener("keydown", onPressKeyESC, { once: true });
+    function onPressKeyESC(evt) {
+      if (evt.code === "Escape") {
+        instanse.close();
+      }
+    }
   }
 }
 
-// const img = document.querySelector('img')
-Image.addEventListener('click', closeModal)
-function closeModal() {
-  const instance = basicLightbox.create(`
-         <div class="gallery__item">
-  <a class="gallery__link" href="${original}">
-    <img
-      class="gallery__image"
-      src="${preview}"
-      data-source="${original}"
-      alt="${description}"
-    />
-  </a>
-</div>`, {
-    onShow: (instance) => {
-        instance.element().querySelector('a').onclick = instance.close
-    }
-})
-
-instance.show()
-}
-
-
-
-console.log(galleryItems);
